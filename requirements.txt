@@ -1,2 +1,4 @@
+python-dotenv
 docx
 simplify_docx
+google-api-python-client
