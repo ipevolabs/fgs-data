@@ -1,3 +1,4 @@
 bak
 venv
 .env
+__pycache__
