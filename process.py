@@ -3,23 +3,6 @@ import sys
 from simplify_docx import simplify
 import utils
 
-def parse_paragraph( parav):
-    assert len(parav)==1, "length of 'paragraph' is not 1"
-    parav0 = parav[0]['VALUE']
-    print(parav0)
-
-def parse_table( tablev):
-    tvlen=len(tablev)
-    if tvlen!=1:
-        print( f"length of 'table' is not 1.  it's {tvlen}")
-    if tvlen==0:
-        return
-    tablev0=tablev[0] 
-    print(tablev0)
-
-
-#{'TYPE': 'table-row', 'VALUE': [{'TYPE': 'table-cell', 'VALUE': [{'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': '登鸛雀樓'}]}, {'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': '◎唐‧王之渙（688~742）'}]}, {'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': '白日依山盡，黃河入海流。'}]}, {'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': '欲窮千里目，更上一層樓。'}]}, {'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': '──選自《文苑英華》'}]}]}, {'TYPE': 'table-cell', 'VALUE': [{'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': 'Climbing the Crane Pagoda'}]}, {'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': 'Wang Zhihuan (688 - 742, Tang Dynasty)'}]}, {'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': 'English translation: Miao Guang'}]}, {'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': 'Behind the mountain range sets the white sun,'}]}, {'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': 'Into the ocean flows the Yellow River;'}]}, {'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': 'To overcome the limit of the clairvoyant eye,'}]}, {'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': 'Climb yet another layer up the pagoda.'}]}, {'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': '── from Wenyuan Yinhua'}]}, {'TYPE': 'paragraph', 'VALUE': [{'TYPE': 'text', 'VALUE': '(Blossoms and Flowers of the Literature Garden)'}]}]}]}
-
 #it's supposed to be two strings
 def table_to_strs(tablev):
     tvlen=len(tablev)
@@ -55,7 +38,7 @@ def paragraphs_to_str( paras):
     return '\n'.join(lines)
 
 def make_dayquote( dayblks):
-    print(f'make_dayquote have {len(dayblks)} blocks')
+    #print(f'make_dayquote have {len(dayblks)} blocks')
     idx = 0
     date_str = p2s(dayblks[idx]['VALUE'])         #1月21日January 21st
     month, day = utils.parse_date( date_str)
