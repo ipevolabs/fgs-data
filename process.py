@@ -2,6 +2,7 @@ import docx
 import sys
 from simplify_docx import simplify
 import utils
+import json
 
 #it's supposed to be two strings
 def table_to_strs(tablev):
@@ -88,18 +89,18 @@ def parse_monthdoc( dd):
     dv0 = dv[0]
     assert dv0['TYPE']=='body', "the first element of 'document' is not a 'body'"
     bodyv = dv0['VALUE']
-    print(f'{len(bodyv)} blocks')
+    #print(f'{len(bodyv)} blocks')
     tmpblks=[]
     dayquotes=[]
     for idx, blk in enumerate(bodyv):
         #assert para['TYPE']=='paragraph'
         blkt = blk['TYPE']
         blkv = blk['VALUE']
-        print(f'block {idx} is a {blkt}')
+        #print(f'block {idx} is a {blkt}')
         if idx==0:  #block 0 is always indication of begin of a month
             continue
         if blkt=='paragraph':
-            print( '\t', p2s( blkv))
+            #print( '\t', p2s( blkv))
             if is_paragraph_date(blkv):
                 if len(tmpblks)>0:
                     dayquote = make_dayquote(tmpblks)
@@ -110,13 +111,24 @@ def parse_monthdoc( dd):
         else:
             print(f"Unknown type {blkt}")
         tmpblks.append(blk)
+    if len(tmpblks)>0:
+        dayquote = make_dayquote(tmpblks)
+        dayquotes.append(dayquote)
     return dayquotes
+
+def show_dayquote(dq):
+    print('date:',dq['date'])
+    for quote in dq['quotes']:
+        print(quote)
+ 
 # read in a document 
 my_doc = docx.Document( sys.argv[1])
 # coerce to JSON using the standard options
 mjson = simplify(my_doc)
 
 dayquotes = parse_monthdoc(mjson)
-print(len(dayquotes))
-# or with non-standard options
-#my_doc_as_json = simplify(my_doc,{"remove-leading-white-space":False})
+
+print(json.dumps(dayquotes, indent=4,ensure_ascii=False))
+#for dq in dayquotes:
+#    show_dayquote(dq)
+
