@@ -46,13 +46,13 @@ def make_dayquote( dayblks):
     idx += 1
     quotes=[]
     while idx < len(dayblks):
-        infos=[]
+        miscs=[]
         for blk in dayblks[idx:]:
             if blk['TYPE']=='paragraph':
-                infos.append(p2s(blk['VALUE'])) #C_20140831_ZW_T_AfterManyAutumns_p208  (October Merit Times)
+                miscs.append(p2s(blk['VALUE'])) #C_20140831_ZW_T_AfterManyAutumns_p208  (October Merit Times)
             else:
                 break
-        idx+=len(infos)
+        idx+=len(miscs)
         if not (idx < len(dayblks)):
             break
         
@@ -62,12 +62,12 @@ def make_dayquote( dayblks):
         tablev = nextblk['VALUE']
         if len(tablev)==0:
             continue
-        [ zh, en ] = table_to_strs( tablev)
+        [ zhtxt, entxt ] = table_to_strs( tablev)
         quote = {
-            'infos': '\n'.join( infos), 
+            'miscs': '\n'.join( miscs), 
             'content': {
-                'zh': zh,
-                'en': en
+                'zh': { 'text': zhtxt},
+                'en': { 'text': entxt}
             }
         }
         quotes.append(quote)
