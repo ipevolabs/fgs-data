@@ -116,6 +116,25 @@ def parse_monthdoc( dd):
         dayquotes.append(dayquote)
     return dayquotes
 
+def revise_quote( q):
+    for lang in q['content']:
+        ct = q['content'][lang]
+        ct['text'] = ct['text'].replace('\r', '\n')
+        lines = ct['text'].split('\n')
+        if lang=='zh':
+            (title, author, cite_from) = utils.extract_quote_meta_zh(lines)
+            print(f"'{title}','{author}','{cite_from}'")
+            ct['title'] = title 
+            ct['author'] = author
+            ct['cite_from'] = cite_from
+        elif lang=='en':
+            pass
+
+def revise_dayquotes( dayquotes):
+    for dq in dayquotes:
+        for q in dq['quotes']:
+            revise_quote(q)
+
 def show_dayquote(dq):
     print('date:',dq['date'])
     for quote in dq['quotes']:
@@ -127,7 +146,7 @@ my_doc = docx.Document( sys.argv[1])
 mjson = simplify(my_doc)
 
 dayquotes = parse_monthdoc(mjson)
-
+revise_dayquotes( dayquotes)
 print(json.dumps(dayquotes, indent=4,ensure_ascii=False))
 #for dq in dayquotes:
 #    show_dayquote(dq)
