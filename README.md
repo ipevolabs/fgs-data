@@ -22,3 +22,8 @@ could be used as testing datasets
 * Aug: https://youtube.com/playlist?list=PLRcizuixTNe-mNxmRw1TRdHkvGNA3q7D4&si=OCf9hDtuIUdH6Tjq
 * Dec: https://youtube.com/playlist?list=PLRcizuixTNe8E-ExcCerY4WHhQ18VCY4G&si=U_cphBMdTo21uca4
 
+### Glossary
+convert it to UTF-8 first
+```sh
+iconv -t utf8 -f big5 hb_glossary.txt > hb_glossary_v2_utf8.txt
+```
