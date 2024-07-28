@@ -27,3 +27,8 @@ convert it to UTF-8 first
 ```sh
 iconv -t utf8 -f big5 hb_glossary.txt > hb_glossary_v2_utf8.txt
 ```
+
+data augumentation command
+```
+python hb_process.py hb_glossary_v2_utf8.txt
+```
