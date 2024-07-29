@@ -53,9 +53,9 @@ def phrases_to_sentences(inputs, model='gpt-4o-mini'):
 
 def append_jsonl( jsonlfn, e):
     # Open the JSONL file in append mode  
-    with open( jsonlfn, 'a') as file:
+    with open( jsonlfn, 'a', encoding='utf-8') as file:
         rdict = format_response(e)
-        file.write(json.dumps( rdict) + '\n')
+        file.write(json.dumps( rdict, ensure_ascii=False) + '\n')
 
 if __name__ == "__main__": 
     inputs=[
