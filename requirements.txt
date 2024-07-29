@@ -1,3 +1,5 @@
+langfuse
+litellm
 python-dotenv
 docx
 simplify_docx
