@@ -1,3 +1,5 @@
+numpy
+tiktoken
 langfuse
 litellm
 python-dotenv
