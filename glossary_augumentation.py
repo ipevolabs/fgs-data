@@ -13,10 +13,12 @@ def handle_response1(response):
     print(token_usage)
 
 def format_response(response):
-    ctn = json.loads( response.choices[0].message.content)
-    #'completion_tokens'
-    #'prompt_tokens'
-    #total_tokens=316
+    ctn = {}
+    try:
+        ctn = json.loads( response.choices[0].message.content)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        print( response.choices[0].message.content)
     return { 'token_usage': dict(response['usage']), 'translation': ctn }
 
 @observe()
