@@ -39,7 +39,7 @@ def phrases_to_sentences(inputs, model='gpt-4o-mini'):
             "phrase": { "zh": "一心不二", "en": "Single-Heartedly"},
             "sentences": [
                 {
-                    "zh":"她一心不二地投身於這個慈善項目，投入了無數的時間和不懈的努力。"
+                    "zh":"她一心不二地投身於這個慈善項目，投入了無數的時間和不懈的努力。",
                     "en": "She single-heartedly dedicated herself to the charity project, putting in countless hours of hard work and unwavering commitment."
                 }
             ]
