@@ -58,6 +58,11 @@ def getargs():
     parser.add_argument('--outfile', type=str, default='auglossary.jsonl', help='Output file path')
     return parser.parse_args()
 
+def errlog(text):
+    file_path = 'errdalog.txt'
+    with open(file_path, 'a') as file:
+        file.write( text + '\n')
+
 def main():
     args = getargs()
     lines = read_utf8_file_to_list( args.file_path)
@@ -69,7 +74,10 @@ def main():
     idx=args.skip
     for e in auggen:
         print(f'{idx}: {inputs[idx]}')
-        append_jsonl( args.outfile, e)
+        try:
+            append_jsonl( args.outfile, e)
+        except Exception as e:
+            errlog( ','.join(inputs[idx]))
         idx+=1
 if __name__ == "__main__":
     main()
