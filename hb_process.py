@@ -55,6 +55,7 @@ def getargs():
     parser.add_argument('--endidx', type=int, default=None, help='End of line NO to process. Default is the end of file')
     parser.add_argument('--skip', type=int, default=0, help='Number of lines to skip.  Default: no skip')
     parser.add_argument('--model', type=str, default='gpt-4o-mini', help='The OpenAI model.  Default: gpt-4o-mini')
+    parser.add_argument('--nsentences', type=int, default=2, help='Number of example sentences to generate per entry. Default: 4')
     parser.add_argument('--outfile', type=str, default='auglossary.jsonl', help='Output file path')
     return parser.parse_args()
 
@@ -68,9 +69,11 @@ def main():
     lines = read_utf8_file_to_list( args.file_path)
     a = PurifyInput(lines)
     inputs = a.load()
-
     print(f'Line range {args.skip} to {args.endidx}')
-    auggen= phrases_to_sentences(inputs[args.skip:args.endidx], args.model)
+    auggen= phrases_to_sentences(
+        phrase_pairs = inputs[args.skip:args.endidx],
+        model = args.model,
+        noutputs = args.nsentences)
     idx=args.skip
     for e in auggen:
         print(f'{idx}: {inputs[idx]}')

@@ -22,11 +22,9 @@ def format_response(response):
 def llm_completion( model, messages):
     return completion(model=model, messages=messages)
 
-def phrases_to_sentences(inputs, model='gpt-4o-mini'):
+def phrases_to_sentences( phrase_pairs, model, noutputs):
+    roleset_prompt= f"你是一個佛學專家, 精通中英文佛教詞彙, 使用者會提供一個佛教詞彙中英翻譯對, 請將其擴展成{noutputs}對完整例句, 中文部分使用繁體中文, 以 JSON 輸出."
     sysmsg = [
-        {"role": "system", "content": """
-你是一個佛學專家, 精通中英文佛教詞彙, 使用者會提供一個佛教詞彙中英翻譯對, 請將其擴展成完整例句, 中文部分使用繁體中文, 以 JSON 輸出.
-    
         {"role": "system", "content": roleset_prompt + """
     JSON 輸出入範例:
 
@@ -44,7 +42,7 @@ def phrases_to_sentences(inputs, model='gpt-4o-mini'):
         }
 """}
     ]
-    for e in inputs:
+    for e in phrase_pairs:
         msgs = [ *sysmsg, { "role": "user", "content": f'{e[0]} -> {e[1]}'}]
         response = llm_completion(model=model, messages=msgs)
         yield response
