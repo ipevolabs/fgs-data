@@ -28,12 +28,10 @@ convert it to UTF-8 first
 iconv -t utf8 -f big5 hb_glossary.txt > hb_glossary_v2_utf8.txt
 ```
 
-data augumentation command
+example usage:
+generating 4 sentences per entry from entry 100 to 200 in `hb_glossary_vt_utf8.txt` using model `gpt-4o`
 ```
-python hb_process.py hb_glossary_v2_utf8.txt
+python hb_process.py hb_glossary_v2_utf8.txt --skip=100 --endidx=200 --nsentences=4 --model="gpt-4o" --outfile=fgsft1.jsonl
+```
 
-```
-if everything is fine, the augumented data should be in 
-```
-auglossary.jsonl
-```
+if everything goes well, the augumented data should be in `fgsft1.jsonl`
