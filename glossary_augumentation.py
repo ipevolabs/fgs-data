@@ -2,9 +2,11 @@ import os
 import json
 from dotenv import load_dotenv
 from litellm import completion
-from langfuse.decorators import langfuse_context, observe
-
+import litellm
 load_dotenv()
+
+litellm.success_callback = ["langfuse"]
+litellm.failure_callback = ["langfuse"]
 
 def handle_response1(response):
     print(response.choices[0].message.content)
@@ -21,7 +23,6 @@ def format_response(response):
         print( response.choices[0].message.content)
     return { 'token_usage': dict(response['usage']), 'translation': ctn }
 
-@observe()
 def llm_completion( model, messages):
     return completion(model=model, messages=messages)
 
@@ -30,6 +31,7 @@ def phrases_to_sentences(inputs, model='gpt-4o-mini'):
         {"role": "system", "content": """
 你是一個佛學專家, 精通中英文佛教詞彙, 使用者會提供一個佛教詞彙中英翻譯對, 請將其擴展成完整例句, 中文部分使用繁體中文, 以 JSON 輸出.
     
+        {"role": "system", "content": roleset_prompt + """
     JSON 輸出入範例:
 
     input:
