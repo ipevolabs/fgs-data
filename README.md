@@ -23,15 +23,29 @@ could be used as testing datasets
 * Dec: https://youtube.com/playlist?list=PLRcizuixTNe8E-ExcCerY4WHhQ18VCY4G&si=U_cphBMdTo21uca4
 
 ### Glossary
-convert it to UTF-8 first
+* convert it to UTF-8 first
 ```sh
 iconv -t utf8 -f big5 hb_glossary.txt > hb_glossary_v2_utf8.txt
 ```
 
-example usage:
+* example usage:
 generating 4 sentences per entry from entry 100 to 200 in `hb_glossary_vt_utf8.txt` using model `gpt-4o`
 ```
 python hb_process.py hb_glossary_v2_utf8.txt --skip=100 --endidx=200 --nsentences=4 --model="gpt-4o" --outfile=fgsft1.jsonl
 ```
-
 if everything goes well, the augumented data should be in `fgsft1.jsonl`
+
+### Post augumentation fix
+It happens time to time that some of these augumented entries are malform.  We proposed a tool to fix it.
+* example usage
+```
+python  filter_dataset.py fgsft2.jsonl
+```
+
+* example output
+```
+fix entries:
+{'normal': 4365, 'malform': 0, 'multi': 19, 'multi2': 9, 'no_en': 1, 'extra_list': 4, 'inconsist_en': 6, 'others': 0}
+number of fixed entries: 112
+fixed_fgs.jsonl saved
+```
