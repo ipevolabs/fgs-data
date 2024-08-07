@@ -49,3 +49,16 @@ fix entries:
 number of fixed entries: 112
 fixed_fgs.jsonl saved
 ```
+
+### Convert for finetune
+```
+python fgsda_to_oaift.py fgsft3.jsonl fgsoai
+```
+```
+Map: 100%|████████████████████████████████████████████████████████████| 4474/4474 [00:00<00:00, 64330.87 examples/s]
+Map: 100%|██████████████████████████████████████████████████████████| 22566/22566 [00:00<00:00, 67042.69 examples/s]
+Creating json from Arrow format: 100%|█████████████████████████████████████████████| 23/23 [00:00<00:00, 327.80ba/s]
+Finetune dataset file fgsoai.jsonl saved. File is valid = True
+```
+
+You can upload `fgsoai.jsonl` to OpenAI finetune console to create a new finetune job.
