@@ -7,6 +7,15 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+numpy = "<=2"
+tiktoken = "^0.7.0"
+langfuse = "^2.43.1"
+litellm = "^1.43.4"
+python-dotenv = "^1.0.1"
+docx = "^0.2.4"
+simplify-docx = "^0.1.2"
+google-api-python-client = "^2.140.0"
+openai = "^1.40.2"
 
 
 [build-system]
