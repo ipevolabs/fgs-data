@@ -128,7 +128,10 @@ def revise_quote( q):
             ct['author'] = author
             ct['cite_from'] = cite_from
         elif lang=='en':
-            pass
+            title, author, cite_from = utils.extract_quote_meta_en(lines)
+            ct['title'] = title
+            ct['author'] = author
+            ct['cite_from'] = cite_from
 
 def revise_dayquotes( dayquotes):
     for dq in dayquotes:

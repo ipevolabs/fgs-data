@@ -57,8 +57,112 @@ def extract_quote_meta_zh(lines):
             cite_from = line
     return ( title, author, cite_from)
 
-def extract_quote_meta_en(text):
+# def extract_quote_meta_en(text):
+#     return None
+
+def find_en_cites(lines: List[str],
+                  pattern: str = "── from") -> str:
+                  # pattern: str= r"─\s*from\s*.*\n?\(.*\)"):
+    '''
+        find english content cite
+        Args:
+            lines (str): english line
+            
+            pattern (str): cite start pattern
+
+        Returns:
+            cite: cite text
+    '''
+    cites_index = 0
+    for index in range(len(lines)-1, -1, -1):
+        if pattern in lines[index]:
+            cites_index = index                                  
+    if cites_index != 0:
+        return "\n".join(lines[cites_index:]).replace(pattern,"").split("Note")[0].strip()
+    else: return None
+
+def find_en_cites_full(content: str,
+                        pattern: str=  r"─\s*from\s*(.*\n?\(.*\))"):
+    match_result = re.findall(pattern, content)
+    if match_result:
+        return match_result[0]
     return None
+
+def find_en_title_and_author(lines: List[str],
+                            english_translation_pattern: str = "English translation: ",
+                            year_patterns: List[str] = [r"\(\s*\d+ -*", r"\(Years unknown", r"\(\s*\?\s*-"],
+                            translate_patterns: List[str]= [r"Translated\s*by", r"Translated\s*into\s*Chinese\s*by\s*Buddhayasas"]
+                            ):
+    
+    '''
+        find english content title and author
+        Args:
+            lines (str): english line
+            
+            translator_pattern (str): translator start pattern, default: "English translation: "
+            
+            year_pattern (str): author year start pattern, default: r"\(\s?\d+ -"
+
+        Returns:
+            cite: cite text
+    '''
+    split_index = -1
+    for line_index in range(len(lines)):
+        if english_translation_pattern in lines[line_index]:
+            split_index = line_index
+            break
+
+    ## 找到翻譯者, 將搜尋範圍限縮
+    if split_index != -1:
+        lines = lines[:split_index]
+    
+    author = None
+    ## find year pattern 
+    for line_index in range(len(lines)):
+        
+        for year_pattern in year_patterns:
+            match_result = re.findall(year_pattern,lines[line_index]) 
+            if match_result:
+                ## get author
+                author = lines[line_index].split(match_result[0])[0].strip()
+                ## 限縮範圍            
+                lines = lines[:line_index]
+                break
+        if author: break
+        for translate_pattern in translate_patterns:
+            match_result = re.findall(translate_pattern,lines[line_index]) 
+            if match_result:
+                ## get author
+                author = lines[line_index].strip()
+                ## 限縮範圍            
+                lines = lines[:line_index]
+                break
+        if author: break
+        
+    if author:
+        title = "\n".join(lines)
+    else:
+        title = lines[0]
+        
+    return title, author
+
+def extract_quote_meta_en(lines: List[str]) -> (str,str,str):
+    '''
+        extract title, author, cite from english content
+        Args:
+            content (str): english content
+            
+
+        Returns:
+            title (str)
+            
+    '''
+    cite_from = find_en_cites(lines)
+    if not cite_from:
+        cite_from = find_en_cites_full("\n".join(lines))
+    title, author = find_en_title_and_author(lines)
+    return title, author, cite_from
+
 
 if __name__ == "__main__":  
     # Example usage  
