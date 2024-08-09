@@ -1,4 +1,7 @@
 import re
+from typing import List
+
+
 def parse_date(date_str):
     # Define a regex pattern to capture the date parts  
     #pattern = r"(\d{1,2})月(\d{1,2})日([A-Za-z]+ \d{1,2}(st|nd|rd|th)?)" 
