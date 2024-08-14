@@ -60,12 +60,8 @@ def extract_quote_meta_zh(lines):
             cite_from = line
     return ( title, author, cite_from)
 
-# def extract_quote_meta_en(text):
-#     return None
-
 def find_en_cites(lines: List[str],
-                  pattern: str = "── from") -> str:
-                  # pattern: str= r"─\s*from\s*.*\n?\(.*\)"):
+                pattern: str = "── from") -> str:
     '''
         find english content cite
         Args:
@@ -81,30 +77,55 @@ def find_en_cites(lines: List[str],
         if pattern in lines[index]:
             cites_index = index                                  
     if cites_index != 0:
-        return "\n".join(lines[cites_index:]).replace(pattern,"").split("Note")[0].strip()
+        return "\n".join(lines[cites_index:]).replace(pattern,"").split("Note")[0].split("*")[0].strip()
     else: return None
 
 def find_en_cites_full(content: str,
-                        pattern: str=  r"─\s*from\s*(.*\n?\(.*\))"):
-    match_result = re.findall(pattern, content)
-    if match_result:
-        return match_result[0]
+                        patterns: list[str]=  [
+                            r"-\s*from\s*-*\s*(.*\n?.*\(.*\))",
+                            r"─\s*from\s*-*\s*(.*\n?.*\(.*\))",
+                            r"─\s*from\s*(.*)"
+                            r"-\s*from\s*(.*)"
+                        ]):
+    '''
+        find english content cite from raw text
+        Args:
+            content (str): raw text
+            
+            patterns (list[str]): cite patterns
+
+        Returns:
+            cite: cite text
+    '''
+    for pattern in patterns:
+        match_result = re.findall(pattern, content)
+        if match_result:
+            # print(match_result)
+            return match_result[0]
     return None
 
 def find_en_title_and_author(lines: List[str],
                             english_translation_pattern: str = "English translation: ",
-                            year_patterns: List[str] = [r"\(\s*\d+ -*", r"\(Years unknown", r"\(\s*\?\s*-"],
-                            translate_patterns: List[str]= [r"Translated\s*by", r"Translated\s*into\s*Chinese\s*by\s*Buddhayasas"]
-                            ):
+                            year_patterns: List[str] = [
+                                r"\(\s*\d+\s*-*", 
+                                r"\(Years unknown", 
+                                r"\(\s*\?\s*-", 
+                                r"\(Approx.\s*\d+\s*-*"
+                            ],
+                            translate_patterns: List[str]= [
+                                r"Translated\s*by",
+                                r"Translated\s*into\s*Chinese\s*by",
+                                r"Author\s*(unknown)"
+                            ]):
     
     '''
         find english content title and author
         Args:
             lines (str): english line
             
-            translator_pattern (str): translator start pattern, default: "English translation: "
+            translator_pattern (list[str]): translator pattern
             
-            year_pattern (str): author year start pattern, default: r"\(\s?\d+ -"
+            year_pattern (list[str]): author year pattern
 
         Returns:
             cite: cite text
@@ -131,16 +152,19 @@ def find_en_title_and_author(lines: List[str],
                 ## 限縮範圍            
                 lines = lines[:line_index]
                 break
-        if author: break
+        if author is not None: break
         for translate_pattern in translate_patterns:
-            match_result = re.findall(translate_pattern,lines[line_index]) 
+            match_result = re.findall(translate_pattern,lines[line_index])
             if match_result:
-                ## get author
-                author = lines[line_index].strip()
-                ## 限縮範圍            
+                if translate_pattern.startswith("Author"):
+                    author = match_result[0].strip()                    
+                else :
+                    ## get author
+                    author = lines[line_index].strip()
+                    ## 限縮範圍            
                 lines = lines[:line_index]
                 break
-        if author: break
+        if author is not None: break
         
     if author:
         title = "\n".join(lines)
@@ -160,9 +184,10 @@ def extract_quote_meta_en(lines: List[str]) -> (str,str,str):
             title (str)
             
     '''
-    cite_from = find_en_cites(lines)
+    
+    cite_from = find_en_cites_full("\n".join(lines))
     if not cite_from:
-        cite_from = find_en_cites_full("\n".join(lines))
+        cite_from = find_en_cites(lines)
     title, author = find_en_title_and_author(lines)
     return title, author, cite_from
 
