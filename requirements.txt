@@ -4,8 +4,8 @@ langfuse
 litellm
 python-dotenv
 docx
-simplify_docx
-#google-api-python-client
+#simplify_docx
+google-api-python-client
 openai
 chainlit
 jiwer
