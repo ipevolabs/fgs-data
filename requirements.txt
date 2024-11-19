@@ -5,6 +5,9 @@ litellm
 python-dotenv
 docx
 simplify_docx
-google-api-python-client
+#google-api-python-client
 openai
 chainlit
+jiwer
+jiaba
+requests
