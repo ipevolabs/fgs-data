@@ -30,7 +30,7 @@ def to_multi_lines(texts):
 
 # rewrite ChineseTransform as a function
 def chinese_transform(texts: List[str]) -> List[str]:
-    chinese_punc = "，。！？；：" "''（）【】《》、…"
+    chinese_punc = "，。！？；：" "''（）【】《》、…呢啊呀欸吶" # "那麼"
     newtexts = []
     for text in texts:
         text = text.strip()
