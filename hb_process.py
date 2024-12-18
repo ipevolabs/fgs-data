@@ -49,6 +49,11 @@ class PurifyInput:
         print(f'{len(entries)} entries.  {self.long_entry_cnt} long entries')
         return self.entries
 
+    def save( self, file_path:str, sep='\t'):
+        with open(file_path, 'w') as file:
+            for entry in self.entries:
+                file.write(f"{entry[0]}{sep}{entry[1]}\n")
+
 def getargs():
     parser = argparse.ArgumentParser(description="Generating full sentences from a FGS Buddhism glossary file.")
     parser.add_argument('file_path', type=str, help='File path of the original line-based glossary file.')
