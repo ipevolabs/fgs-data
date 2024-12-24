@@ -1,7 +1,7 @@
 import os
 import json
 from dotenv import load_dotenv
-from litellm import completion
+from litellm import completion, Usage, ModelResponse
 import litellm
 load_dotenv()
 
@@ -14,10 +14,14 @@ def handle_response1(response):
     token_usage = response['usage']
     print(token_usage)
 
-def format_response(response):
+def format_response(response:ModelResponse):
     jstr = response.choices[0].message.content
+    #strip out the markdown formatting lines
+    jstr = jstr.replace('```json\n','').replace('```','')
     ctn = json.loads( jstr)
-    return { 'token_usage': dict(response['usage']), 'translation': ctn }
+    #filter out those not serializable
+    usage_dic = {k: v for k, v in dict(response['usage']).items() if isinstance(v, (int, float, str))}
+    return { 'token_usage': usage_dic , 'translation': ctn }
 
 def llm_completion( model, messages):
     return completion(model=model, messages=messages)
@@ -47,10 +51,10 @@ def phrases_to_sentences( phrase_pairs, model, noutputs):
         response = llm_completion(model=model, messages=msgs)
         yield response
 
-def append_jsonl( jsonlfn, e):
-    # Open the JSONL file in append mode  
+def append_jsonl( jsonlfn:str, entry):
+    # Open the JSONL file in append mode
     with open( jsonlfn, 'a', encoding='utf-8') as file:
-        rdict = format_response(e)
+        rdict = format_response(entry)
         file.write(json.dumps( rdict, ensure_ascii=False) + '\n')
 
 if __name__ == "__main__": 

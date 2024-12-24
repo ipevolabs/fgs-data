@@ -69,23 +69,34 @@ def errlog(text):
     with open(file_path, 'a') as file:
         file.write( text + '\n')
 
+from typing import List,Dict
+import pandas as pd
+
+def load_glossary_old( file_path:str)->List[str]:
+    lines = read_utf8_file_to_list( file_path)
+    a = PurifyInput(lines)
+    return a.load()
+
+def load_glossary( file_path:str)->List[str]:
+    df = pd.read_csv( file_path, sep='\t')
+    return df.values.tolist()
+
 def main():
     args = getargs()
-    lines = read_utf8_file_to_list( args.file_path)
-    a = PurifyInput(lines)
-    inputs = a.load()
+    #inputs = load_glossary_old( args.file_path)
+    inputs = load_glossary( args.file_path)
     print(f'Line range {args.skip} to {args.endidx}')
     auggen= phrases_to_sentences(
         phrase_pairs = inputs[args.skip:args.endidx],
         model = args.model,
         noutputs = args.nsentences)
     idx=args.skip
-    for e in auggen:
+    for resp in auggen:
         print(f'{idx}: {inputs[idx]}')
         try:
-            append_jsonl( args.outfile, e)
+            append_jsonl( args.outfile, resp)
         except Exception as e:
-            errlog( ','.join(inputs[idx]))
+            errlog( ','.join(inputs[idx]) +':'+ str(e))
         idx+=1
 if __name__ == "__main__":
     main()
