@@ -67,7 +67,7 @@ def getargs():
 def errlog(text):
     file_path = 'errdalog.txt'
     with open(file_path, 'a') as file:
-        file.write( text + '\n')
+        file.write( 'err:' + text + '\n')
 
 from typing import List,Dict
 import pandas as pd
@@ -96,7 +96,7 @@ def main():
         try:
             append_jsonl( args.outfile, resp)
         except Exception as e:
-            errlog( ','.join(inputs[idx]) +':'+ str(e))
+            errlog( ','.join(inputs[idx]) +'\t'+ str(e))
         idx+=1
 if __name__ == "__main__":
     main()
