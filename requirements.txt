@@ -11,3 +11,4 @@ chainlit
 jiwer
 jiaba
 requests
+datasets
