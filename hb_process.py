@@ -96,7 +96,7 @@ def main():
         try:
             append_jsonl( args.outfile, resp)
         except Exception as e:
-            errlog( ','.join(inputs[idx]) +'\t'+ str(e))
+            errlog( '\t'.join(inputs[idx]) +'\t'+ str(e))
         idx+=1
 if __name__ == "__main__":
     main()
