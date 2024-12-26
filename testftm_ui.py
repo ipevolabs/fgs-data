@@ -9,8 +9,9 @@ client = AsyncOpenAI()
 cl.instrument_openai()
 
 settings = {
+    "model": 'ft:gpt-4o-2024-08-06:ipevo-corp:20241226:Aia7iefG',
     #"model": "ft:gpt-4o-mini-2024-07-18:ipevo-corp::9qI6ek8y",
-    "model": 'ft:gpt-4o-mini-2024-07-18:ipevo-corp:fgs-glossary3:9ssy45aS',
+    #"model": 'ft:gpt-4o-mini-2024-07-18:ipevo-corp:fgs-glossary3:9ssy45aS',
     #"model": 'ft:gpt-4o-mini-2024-07-18:ipevo-corp:fgs-glossary3:9srFRIKs',
     "temperature": 0,
 }
