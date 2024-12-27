@@ -1,3 +1,4 @@
+import warnings
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 import chainlit as cl
