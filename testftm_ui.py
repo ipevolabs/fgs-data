@@ -150,22 +150,25 @@ async def start():
     promptSettings.update(psettings)
     previous_segments = []
 
+@cl.on_settings_update
+async def on_settings_update(settings: Dict):
+    print('settings updated:', settings)
+    promptSettings.update(settings)
 
 
-def wrap_user_message(umsg):
-    wrapped_msg = {    
-        "context": {  
+def wrap_user_message(umsg:str)->str:
+    jterms = promptSettings['SpecializedTerms'] 
+    wrapped_msg = {
+        "context": {
             "previous_segments": previous_segments,
-            "specialized_terms": {  
-                "愛比科技": "IPEVO Corp",
-            }
+            "specialized_terms": json.loads(jterms)
         },
         "input": umsg,
     }
-    print("Wrapped Message:", wrapped_msg)
-    #encode wrapped_msg to json
+    #print("Wrapped Message:", wrapped_msg)
+    # encode wrapped_msg to json
     return json.dumps(wrapped_msg)
-    
+
 @cl.on_message
 async def on_message(message: cl.Message):
     system_prompt = promptSettings["SystemPrompt"]
