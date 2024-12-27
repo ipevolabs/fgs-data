@@ -19,8 +19,7 @@ settings = {
     #"model": "ft:gpt-4o-mini-2024-07-18:ipevo-corp::9qI6ek8y",
     #"model": 'ft:gpt-4o-mini-2024-07-18:ipevo-corp:fgs-glossary3:9ssy45aS',
     #"model": 'ft:gpt-4o-mini-2024-07-18:ipevo-corp:fgs-glossary3:9srFRIKs',
-    "temperature": 0,
-    "response_format": "json_object",
+    "temperature": 0
 }
 
 @cl.set_starters
