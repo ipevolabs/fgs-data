@@ -186,12 +186,12 @@ async def on_message(message: cl.Message):
         ],
         **settings
     )
-    print( 'response is ', response.choices[0].message)
-    translated = response.choices[0].message.content
-    tpair = { "source": input_text, "translation": translated}
+    jresp = response.choices[0].message.content
     
-    previous_segments.append(tpair)
+    # JSON decode the translated text
+    translated = json.loads( jresp)['output']
+    tpair = { "source": input_text, "translation": translated }    
+    #previous_segments.append(tpair)
     if len(previous_segments) > 5:
         previous_segments.pop(0)
     await cl.Message(translated).send()
-
