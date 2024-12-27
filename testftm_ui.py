@@ -42,10 +42,18 @@ async def set_starters():
 async def start():
     settings = await cl.ChatSettings(
         [
-            TextInput(id="AgentName", label="Agent Name", initial="AI"),
+            cl.TextInput(id="AgentName", label="Agent Name", initial="AI"),
+            cl.TextInput(
+                id="SystemPrompt",
+                label="System Prompt",
+                initial="You are a Buddhist scholar, proficient in Chinese and English Buddhist terms, and will translate the input Chinese into English.",
+                description="Enter the system prompt to define the AI assistant's behavior"
+            ),
         ]
     ).send()
-    value = settings["AgentName"]
+    # Get values from settings
+    agent_name = settings["AgentName"]
+    system_prompt = settings["SystemPrompt"]
 
 @cl.on_chat_start
 async def start():
@@ -61,10 +69,11 @@ async def start():
 
 @cl.on_message
 async def on_message(message: cl.Message):
+    system_prompt = settings["SystemPrompt"]
     response = await client.chat.completions.create(
         messages=[
             {
-                "content": "你是一個佛學專家,精通中英文佛教詞彙,會將輸入中文翻譯為英文",
+                "content": system_prompt,
                 "role": "system"
             },
             {
