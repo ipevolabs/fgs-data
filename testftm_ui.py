@@ -1,8 +1,12 @@
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 import chainlit as cl
+from chainlit.input_widget import TextInput
+import os
+import json
 
 load_dotenv()
+print('OpenAI API Key:', os.getenv('OPENAI_API_KEY'))
 client = AsyncOpenAI()
 
 # Instrument the OpenAI client
@@ -14,6 +18,7 @@ settings = {
     #"model": 'ft:gpt-4o-mini-2024-07-18:ipevo-corp:fgs-glossary3:9ssy45aS',
     #"model": 'ft:gpt-4o-mini-2024-07-18:ipevo-corp:fgs-glossary3:9srFRIKs',
     "temperature": 0,
+    "response_format": "json_object",
 }
 
 @cl.set_starters
@@ -38,38 +43,112 @@ async def set_starters():
             )
         ]
 
+promptSettings = {}
+previous_segments = []
+systemPrompt = ""
+
+
+
 @cl.on_chat_start
 async def start():
-    settings = await cl.ChatSettings(
+    print('do chat start')
+    psettings = await cl.ChatSettings(
         [
-            cl.TextInput(id="AgentName", label="Agent Name", initial="AI"),
-            cl.TextInput(
+            TextInput(id="AgentName", label="Agent Name", initial="AI"),
+            TextInput(
                 id="SystemPrompt",
                 label="System Prompt",
-                initial="You are a Buddhist scholar, proficient in Chinese and English Buddhist terms, and will translate the input Chinese into English.",
-                description="Enter the system prompt to define the AI assistant's behavior"
+                initial="""
+You are a buddhist studies assistant.  You're specialized translator working from Chinese to English. Your primary task is to provide real-time, contextually aware translations.
+You would 
+Core Translation Rules:  
+- Maintain consistency with previously translated segments  
+- Honor the specialized vocabulary provided in the context  
+- Provide natural, fluent translations that work in context  
+- Handle both complete and partial sentences appropriately  
+- Never explain or comment on the translation unless explicitly asked  
+- Output the translation in the following format: { "output": "translated text" }
+
+Expected Input JSON Format:  
+{  
+    "context": {  
+        "previous_segments": [  
+            {  
+                "source": "source text",  
+                "translation": "translated text"
+            }  
+        ],  
+        "specialized_terms": {  
+            "term1": "translation1",  
+            "term2": "translation2"  
+        }  
+    },  
+    "input":  "text to translate"
+}
+
+JSON Processing Rules:
+- Use all previous segments in the context for maintaining consistency
+- Apply specialized terms exactly as provided in the JSON
+- If a specialized term has metadata, use the "translation" field
+- Process the input text directly from the "input" field or "input.text" if in object format  
+
+
+Example Input and Output:  
+Input:
+```json
+{  
+    "context": {  
+        "previous_segments": [  
+            {  
+                "source": "我們知道有一個藏經叫做鐵眼藏經",
+                "translation": "We know of a canon called the Tetsugan Canon",
+            }  
+        ],  
+        "specialized_terms": {  
+            "愛比科技": "IPEVO",
+            "松下電器": "Panasonic"
+        }  
+    },
+    "input":"鐵眼禪師為宣傳佛法，募款印刷大藏經救助眾生"
+}
+```
+
+Output:
+```json
+{
+    "output": "To promote Buddhism, Tetsugan Zen Master raised funds to print the Great Canon to save sentient beings"
+}
+```
+
+""",                
+                description="Enter the system prompt to define the AI assistant's behavior",
+                multiline=True
             ),
         ]
     ).send()
-    # Get values from settings
-    agent_name = settings["AgentName"]
-    system_prompt = settings["SystemPrompt"]
+    promptSettings.update(psettings)
+    previous_segments = []
 
-@cl.on_chat_start
-async def start():
-    elements = [
-        cl.File(
-            name="hb_glossary_v2_utf8.txt",
-            path="./hb_glossary_v2_utf8.txt",
-        ),
-    ]
-    await cl.Message(
-        content="This message has a file element", elements=elements
-    ).send()
 
+
+def wrap_user_message(umsg):
+    wrapped_msg = {    
+        "context": {  
+            "previous_segments": previous_segments,
+            "specialized_terms": {  
+                "愛比科技": "IPEVO Corp",
+            }
+        },
+        "input": umsg,
+    }
+    print("Wrapped Message:", wrapped_msg)
+    #encode wrapped_msg to json
+    return json.dumps(wrapped_msg)
+    
 @cl.on_message
 async def on_message(message: cl.Message):
-    system_prompt = settings["SystemPrompt"]
+    system_prompt = promptSettings["SystemPrompt"]
+    input_text = message.content
     response = await client.chat.completions.create(
         messages=[
             {
@@ -77,11 +156,18 @@ async def on_message(message: cl.Message):
                 "role": "system"
             },
             {
-                "content": message.content,
+                "content": wrap_user_message(input_text),
                 "role": "user"
             }
         ],
         **settings
     )
-    await cl.Message(content=response.choices[0].message.content).send()
+    print( 'response is ', response.choices[0].message)
+    translated = response.choices[0].message.content
+    tpair = { "source": input_text, "translation": translated}
+    
+    previous_segments.append(tpair)
+    if len(previous_segments) > 5:
+        previous_segments.pop(0)
+    await cl.Message(translated).send()
 
