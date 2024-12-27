@@ -44,47 +44,38 @@ async def set_starters():
             )
         ]
 
-promptSettings = {}
-previous_segments = []
-systemPrompt = ""
 
+initial_sysprompt = """
+You are an assistant specializing in Buddhist studies, with expertise in translating Buddhist talks from Chinese to English. Your main role is to deliver real-time translations that are accurate and contextually appropriate.
 
-
-@cl.on_chat_start
-async def start():
-    print('do chat start')
-    psettings = await cl.ChatSettings(
-        [
-            TextInput(id="AgentName", label="Agent Name", initial="AI"),
-            TextInput(
-                id="SystemPrompt",
-                label="System Prompt",
-                initial="""
-You are a buddhist studies assistant.  You're specialized translator working from Chinese to English. Your primary task is to provide real-time, contextually aware translations.
-You would 
-Core Translation Rules:  
-- Maintain consistency with previously translated segments  
-- Honor the specialized vocabulary provided in the context  
-- Provide natural, fluent translations that work in context  
-- Handle both complete and partial sentences appropriately  
-- Never explain or comment on the translation unless explicitly asked  
-- Output the translation in the following format: { "output": "translated text" }
+Core Translation Rules:
+- Maintain consistency with previously translated segments
+- Honor the specialized vocabulary provided in the context
+- Provide natural, fluent translations that work in context
+- Handle both complete and partial sentences appropriately
+- Never explain or comment on the translation unless explicitly asked
+- Output the translation in the JSON format 
 
 Expected Input JSON Format:  
 {  
     "context": {  
-        "previous_segments": [  
+        "previous_segments": [
             {  
-                "source": "source text",  
+                "source": "source text",
                 "translation": "translated text"
-            }  
-        ],  
-        "specialized_terms": {  
-            "term1": "translation1",  
-            "term2": "translation2"  
-        }  
-    },  
+            }
+        ],
+        "specialized_terms": {
+            "term1": "translation1",
+            "term2": "translation2"
+        }
+    },
     "input":  "text to translate"
+}
+
+Output JSON Format:
+{
+    "output": "translation of input text"
 }
 
 JSON Processing Rules:
@@ -101,14 +92,13 @@ Input:
     "context": {  
         "previous_segments": [  
             {  
-                "source": "我們知道有一個藏經叫做鐵眼藏經",
-                "translation": "We know of a canon called the Tetsugan Canon",
+                "source": "我們知道有一部藏經叫做鐵眼藏經, 來源是日本鐵眼禪師",
+                "translation": "We know of a canon called the Tetsugan Canon, originating from Japanese Tetsugan Zen Master.",
             }  
-        ],  
-        "specialized_terms": {  
-            "愛比科技": "IPEVO",
-            "松下電器": "Panasonic"
-        }  
+        ],
+        "specialized_terms": {
+            "愛比科技": "IPEVO"
+        }
     },
     "input":"鐵眼禪師為宣傳佛法，募款印刷大藏經救助眾生"
 }
@@ -121,7 +111,37 @@ Output:
 }
 ```
 
-""",                
+"""
+
+promptSettings = {}
+previous_segments = []
+systemPrompt = ""
+specializedTerms = {}
+initial_terms = {
+    "愛比科技": "IPEVO Corp",
+    "松下電器": "Panasonic",
+    "金池長老": "monk Jinchi",
+    "西遊記": "The Journey to The West",
+    "唐僧": "Tang Priest",
+    "鐵拳": "Tekken",
+    "正念": "mindfulness",
+    "大念處經":"The Discourse on the Establishing of Mindfulness"
+}
+
+@cl.on_chat_start
+async def start():
+    psettings = await cl.ChatSettings(
+        [
+            TextInput(
+                id="SpecializedTerms",
+                label="Specialized Terms",
+                initial=json.dumps(initial_terms, ensure_ascii=False, indent=2),
+                multiline=True,
+            ),
+            TextInput(
+                id="SystemPrompt",
+                label="System Prompt",
+                initial=initial_sysprompt,
                 description="Enter the system prompt to define the AI assistant's behavior",
                 multiline=True
             ),
