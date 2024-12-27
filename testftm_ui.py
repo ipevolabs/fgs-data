@@ -4,9 +4,11 @@ import chainlit as cl
 from chainlit.input_widget import TextInput
 import os
 import json
+from typing import List,Dict
 
+warnings.filterwarnings('ignore')
 load_dotenv()
-print('OpenAI API Key:', os.getenv('OPENAI_API_KEY'))
+#print('OpenAI API Key:', os.getenv('OPENAI_API_KEY'))
 client = AsyncOpenAI()
 
 # Instrument the OpenAI client
