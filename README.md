@@ -61,4 +61,8 @@ Creating json from Arrow format: 100%|██████████████
 Finetune dataset file fgsoai.jsonl saved. File is valid = True
 ```
 
+### UI test
+```
+chainlit run --port 8100 testftm_ui.py -w
+```
 You can upload `fgsoai.jsonl` to OpenAI finetune console to create a new finetune job.
