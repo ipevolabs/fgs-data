@@ -10,5 +10,6 @@ openai
 chainlit
 jiwer
 jiaba
+pydantic==2.10.1
 requests
 datasets
