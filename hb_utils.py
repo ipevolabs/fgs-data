@@ -69,6 +69,25 @@ def main_errlog( glfn:str):
 	for e in elist:
 		print(f'{e["zh"]}\t{e["en"]}')
 
+def main_listdup( shortgl:str, longgl:str):
+	short_glossary = load_glossary( shortgl)
+	long_glossary = load_glossary( longgl)
+	# check if any of short glossary's Chinese entries are in long glossary Chinese entries
+	dups = {}
+	for sentry in short_glossary:
+		[shortzh,shorten] = sentry
+		for lentry in long_glossary:
+			[longzh,longen] = lentry
+			if shortzh in longzh:
+				if shortzh not in dups:
+					dups[shortzh] = { 'sentry': sentry, 'lentries':[]}
+				dups[shortzh]['lentries'].append( lentry)
+	# pretty print the dups dictionary
+	for (key,dup) in dups.items():
+		print(dup['sentry'])
+		for lentry in dup['lentries']:
+			print(f'\t{lentry}')
+
 if __name__ == "__main__":
 	if len(sys.argv)<3:
 		print('Usage: python hb_utils.py <command> [file_path] [optional_args]')
@@ -82,3 +101,5 @@ if __name__ == "__main__":
 		main_check( *args)
 	elif cmd=='errlog':
 		main_errlog(*args)
+	elif cmd=='listdup':
+		main_listdup(*args)
