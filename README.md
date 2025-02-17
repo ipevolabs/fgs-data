@@ -67,3 +67,8 @@ You can upload `fgsoai.jsonl` to OpenAI finetune console to create a new finetun
 ```
 chainlit run --port 8100 testftm_ui.py -w
 ```
+
+### Find duplicated entries
+```
+python hb_utils.py listdup blia_terminology.tsv hb_glossary_v2v3.tsv > blipdup.txt 
+```
