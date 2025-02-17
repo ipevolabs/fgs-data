@@ -81,7 +81,8 @@ def main_listdup( shortgl:str, longgl:str):
 			if shortzh in longzh:
 				if shortzh not in dups:
 					dups[shortzh] = { 'sentry': sentry, 'lentries':[]}
-				dups[shortzh]['lentries'].append( lentry)
+				if not shorten in longen: #only add those entries that are not exactly the same
+					dups[shortzh]['lentries'].append( lentry)
 	# pretty print the dups dictionary
 	for (key,dup) in dups.items():
 		print(dup['sentry'])
