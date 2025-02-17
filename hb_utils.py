@@ -85,6 +85,8 @@ def main_listdup( shortgl:str, longgl:str):
 					dups[shortzh]['lentries'].append( lentry)
 	# pretty print the dups dictionary
 	for (key,dup) in dups.items():
+		if len(dup['lentries'])==0:
+			continue
 		print(dup['sentry'])
 		for lentry in dup['lentries']:
 			print(f'\t{lentry}')
