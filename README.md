@@ -72,3 +72,9 @@ chainlit run --port 8100 testftm_ui.py -w
 ```
 python hb_utils.py listdup blia_terminology.tsv hb_glossary_v2v3.tsv > blipdup.txt 
 ```
+
+### Merge and adjust entries
+```
+python hb_utils.py merge blia_terminology.tsv blia_terminology_0327.tsv
+#check blia_terminology_merged.tsv
+```

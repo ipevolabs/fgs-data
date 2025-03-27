@@ -2,6 +2,12 @@ import sys
 from typing import List,Dict
 import pandas as pd
 
+
+def is_exclude_glossary( chinese:str, english:str) -> bool:
+	if english == 'BLIA-YAD Chunghua General Conference':
+		return True
+	return False
+	
 def load_glossary( file_path:str)->List[str]:
 	df = pd.read_csv( file_path, sep='\t')
 	adf = df[ ['#Chinese','#English']]
@@ -92,6 +98,51 @@ def main_listdup( shortgl:str, longgl:str):
 		for lentry in dup['lentries']:
 			print(f'\t{lentry}')
 
+def transform_entry( entry:tuple[str]) -> tuple[str]|None:
+	chstr, enstr = entry
+	to_remove = [ '顧問', '代表', '秘書', '理事']
+	if chstr in to_remove:
+		return ('','')
+	ret = None 	
+	# entries to transform
+	if chstr == '國際佛光會　　分會':
+		ret = ('國際佛光會洛杉磯分會', 'BLIA Los Angeles SubChapter')
+	elif chstr == '國際佛光會　　協會':
+		ret = ('國際佛光會洛杉磯協會', 'BLIA Los Angeles Chapter')
+	elif chstr== '副會長':
+		ret = ('副會長','Vice President')
+	elif chstr == '國際佛光會世界總會　　辦事處':
+		ret = '國際佛光會世界總會亞洲辦事處', 'BLIA World Headquarters Asia Regional Office'
+	return ret
+
+def main_merge(  shortgl_fn:str, longgl_fn:str):
+	selcols = ['#Chinese','#English']
+	df1 = pd.read_csv( shortgl_fn, sep='\t')
+	df2 = pd.read_csv( longgl_fn, sep='\t')
+
+	merged_df = pd.concat([df1[selcols], df2[selcols]], ignore_index=True)
+
+	print( 'number of total rows :', len(merged_df))
+	# Sort the DataFrame by columen '#Chinese'
+	merged_df = merged_df.sort_values(by=['#Chinese'])
+	# strip out quotes and remove newline characters
+	quotechars = '\"\''
+	merged_df['#Chinese'] = merged_df['#Chinese'].str.strip(quotechars)
+	merged_df['#English'] = merged_df['#English'].str.strip(quotechars)
+
+	# remove duplicates
+	merged_df = merged_df.drop_duplicates(subset=['#Chinese'], keep='first')
+	print( 'number of unique rows:', len(merged_df))
+	for idx,entry in merged_df.iterrows():
+		transformed = transform_entry( (entry['#Chinese'], entry['#English']))
+		if transformed:
+			if transformed[0] == '':
+				merged_df.drop(idx, inplace=True)
+				continue
+			merged_df.loc[idx] = transformed
+	# save as tsv
+	merged_df.to_csv('blia_terminology_merged.tsv', sep='\t', index=False)
+
 if __name__ == "__main__":
 	if len(sys.argv)<3:
 		print('Usage: python hb_utils.py <command> [file_path] [optional_args]')
@@ -107,3 +158,5 @@ if __name__ == "__main__":
 		main_errlog(*args)
 	elif cmd=='listdup':
 		main_listdup(*args)
+	elif cmd=='merge':
+		main_merge(*args)
