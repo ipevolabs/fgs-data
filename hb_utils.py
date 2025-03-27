@@ -155,8 +155,8 @@ def dump_ft_json( ftjson_fn:str):
 		print(f"{phrase['zh']}\t{phrase['en']}")
 		sentences = tdict['sentences']
 		for sentence in sentences:
-			print( f'\t\t{sentence["zh"]}')
-			print( f'\t\t{sentence["en"]}')
+			print( f' \t \t{sentence["zh"]}')
+			print( f' \t \t{sentence["en"]}')
 		#print('')
 	#df['translation']
 	#"translation": {"phrase": {"zh": "七誡運動歌", "en": "Song of Encouragement"}, "sentences": [{"z"
