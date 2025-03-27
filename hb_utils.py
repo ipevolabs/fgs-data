@@ -4,7 +4,8 @@ import pandas as pd
 
 def load_glossary( file_path:str)->List[str]:
 	df = pd.read_csv( file_path, sep='\t')
-	return df.values.tolist()
+	adf = df[ ['#Chinese','#English']]
+	return adf.values.tolist()
 
 def find_index_of_string( glossary:List, tofind:str)->List:
 	indexes=[]
