@@ -1,4 +1,4 @@
-import sys
+import sys,os
 import argparse
 from glossary_augumentation import phrases_to_sentences,append_jsonl
 
@@ -83,7 +83,10 @@ def load_glossary( file_path:str)->List[str]:
 
 def main():
     args = getargs()
-    #inputs = load_glossary_old( args.file_path)
+    # check file existence
+    if not os.path.exists(args.file_path):
+        print(f"Error: glossary file not found: {args.file_path}")
+        sys.exit(1)
     inputs = load_glossary( args.file_path)
     print(f'Line range {args.skip} to {args.endidx}')
     auggen= phrases_to_sentences(
