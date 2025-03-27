@@ -27,7 +27,12 @@ def llm_completion( model, messages):
     return completion(model=model, messages=messages)
 
 def phrases_to_sentences( phrase_pairs, model, noutputs):
-    roleset_prompt= f"你是一個佛學專家, 精通中英文佛教詞彙, 使用者會提供一個佛教詞彙中英翻譯對, 請將其擴展成{noutputs}對完整例句, 中文部分使用繁體中文, 以 JSON 輸出."
+    roleset_prompt= f"""
+    你是一個佛學專家, 精通中英文佛教詞彙, 使用者會提供一個佛教詞彙中英翻譯對, 請將其擴展成{noutputs}對完整例句, 中文部分使用繁體中文, 以 JSON 輸出.
+    翻譯原則:
+    - 職稱性名詞如會長,主席, 假設其為隸屬在國際佛光會(BLIA)的職位 
+    - 單位名詞如理事會,行政文書組, 假設其為隸屬在國際佛光會(BLIA)的單位  
+    """
     sysmsg = [
         {"role": "system", "content": roleset_prompt + """
     JSON 輸出入範例:
