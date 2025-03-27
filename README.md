@@ -78,3 +78,6 @@ python hb_utils.py listdup blia_terminology.tsv hb_glossary_v2v3.tsv > blipdup.t
 python hb_utils.py merge blia_terminology.tsv blia_terminology_0327.tsv
 #check blia_terminology_merged.tsv
 ```
+
+### Dump the augumented entries(for finetune) in a readable form
+python hb_utils.py dumpftjson fgsft_202503.jsonl > fgsft_202503.csv

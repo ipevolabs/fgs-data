@@ -143,6 +143,24 @@ def main_merge(  shortgl_fn:str, longgl_fn:str):
 	# save as tsv
 	merged_df.to_csv('blia_terminology_merged.tsv', sep='\t', index=False)
 
+import json
+def dump_ft_json( ftjson_fn:str):
+	df = pd.read_json( ftjson_fn, lines=True)
+	print('#Chinese\t#English\t#Sentences')
+	#get the translation column as a new dataframe
+	for index, row in df.iterrows():
+        # Get the specified column
+		tdict = row['translation']
+		phrase = tdict['phrase']
+		print(f"{phrase['zh']}\t{phrase['en']}")
+		sentences = tdict['sentences']
+		for sentence in sentences:
+			print( f'\t\t{sentence["zh"]}')
+			print( f'\t\t{sentence["en"]}')
+		#print('')
+	#df['translation']
+	#"translation": {"phrase": {"zh": "七誡運動歌", "en": "Song of Encouragement"}, "sentences": [{"z"
+	
 if __name__ == "__main__":
 	if len(sys.argv)<3:
 		print('Usage: python hb_utils.py <command> [file_path] [optional_args]')
@@ -160,3 +178,5 @@ if __name__ == "__main__":
 		main_listdup(*args)
 	elif cmd=='merge':
 		main_merge(*args)
+	elif cmd=='dumpftjson':
+		dump_ft_json(*args)
