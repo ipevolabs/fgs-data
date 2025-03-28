@@ -73,10 +73,11 @@ chainlit run --port 8100 testftm_ui.py -w
 python hb_utils.py listdup blia_terminology.tsv hb_glossary_v2v3.tsv > blipdup.txt 
 ```
 
-### Merge and adjust entries
+### Adjust entries
+It can merge and adjust multiple glossory files in TSV format
 ```
-python hb_utils.py merge blia_terminology.tsv blia_terminology_0327.tsv
-#check blia_terminology_merged.tsv
+python hb_utils.py adjust blia_terminology.tsv blia_terminology_0327.tsv > blia_terminology_corrected.tsv 
+python hb_utils.py adjust blia_terminology_0327.tsv > blia_terminology_corrected.tsv 
 ```
 
 ### Dump the augumented entries(for finetune) in a readable form

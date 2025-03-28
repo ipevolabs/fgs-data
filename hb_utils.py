@@ -1,13 +1,10 @@
 import sys
 from typing import List,Dict
 import pandas as pd
+import logging
 
+logger = logging.getLogger(__name__)
 
-def is_exclude_glossary( chinese:str, english:str) -> bool:
-	if english == 'BLIA-YAD Chunghua General Conference':
-		return True
-	return False
-	
 def load_glossary( file_path:str)->List[str]:
 	df = pd.read_csv( file_path, sep='\t')
 	adf = df[ ['#Chinese','#English']]
@@ -115,14 +112,14 @@ def transform_entry( entry:tuple[str]) -> tuple[str]|None:
 		ret = '國際佛光會世界總會亞洲辦事處', 'BLIA World Headquarters Asia Regional Office'
 	return ret
 
-def main_merge(  shortgl_fn:str, longgl_fn:str):
+def main_adjust_multiple(  fns:List[str]):
 	selcols = ['#Chinese','#English']
-	df1 = pd.read_csv( shortgl_fn, sep='\t')
-	df2 = pd.read_csv( longgl_fn, sep='\t')
+	merged_df = pd.read_csv(  fns[0], sep='\t')
+	for fn in fns[1:]:
+		dfnext = pd.read_csv( fn, sep='\t')
+		merged_df = pd.concat([merged_df[selcols], dfnext[selcols]], ignore_index=True)
 
-	merged_df = pd.concat([df1[selcols], df2[selcols]], ignore_index=True)
-
-	print( 'number of total rows :', len(merged_df))
+	#logger.debug( f'number of total rows : { len(merged_df)}')
 	# Sort the DataFrame by columen '#Chinese'
 	merged_df = merged_df.sort_values(by=['#Chinese'])
 	# strip out quotes and remove newline characters
@@ -132,16 +129,20 @@ def main_merge(  shortgl_fn:str, longgl_fn:str):
 
 	# remove duplicates
 	merged_df = merged_df.drop_duplicates(subset=['#Chinese'], keep='first')
-	print( 'number of unique rows:', len(merged_df))
 	for idx,entry in merged_df.iterrows():
 		transformed = transform_entry( (entry['#Chinese'], entry['#English']))
 		if transformed:
+			#print('transformed=', transformed, 'idx=', idx)
 			if transformed[0] == '':
 				merged_df.drop(idx, inplace=True)
 				continue
-			merged_df.loc[idx] = transformed
-	# save as tsv
-	merged_df.to_csv('blia_terminology_merged.tsv', sep='\t', index=False)
+			# update the entry
+			merged_df.loc[idx, ['#Chinese', '#English']] = transformed
+	#logger.debug( f'number of rows after adjusting: { len(merged_df)}')
+	if False: #save as tsv
+		merged_df.to_csv('blia_terminology_merged.tsv', sep='\t', index=False)
+	#output the tsv file to stdout
+	print(merged_df.to_csv(sep='\t', index=False))
 
 import json
 def dump_ft_json( ftjson_fn:str):
@@ -176,7 +177,7 @@ if __name__ == "__main__":
 		main_errlog(*args)
 	elif cmd=='listdup':
 		main_listdup(*args)
-	elif cmd=='merge':
-		main_merge(*args)
+	elif cmd=='adjust':
+		main_adjust_multiple(args)
 	elif cmd=='dumpftjson':
 		dump_ft_json(*args)
