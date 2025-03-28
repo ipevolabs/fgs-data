@@ -139,8 +139,6 @@ def main_adjust_multiple(  fns:List[str]):
 			# update the entry
 			merged_df.loc[idx, ['#Chinese', '#English']] = transformed
 	#logger.debug( f'number of rows after adjusting: { len(merged_df)}')
-	if False: #save as tsv
-		merged_df.to_csv('blia_terminology_merged.tsv', sep='\t', index=False)
 	#output the tsv file to stdout
 	print(merged_df.to_csv(sep='\t', index=False))
 
