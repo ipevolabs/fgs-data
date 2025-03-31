@@ -33,7 +33,14 @@ async def set_starters():
             label="佛光山專屬名詞",
             message="在最新一期的佛光世紀中，有一篇文章詳細介紹了禪修的諸多好處。",
             ),
-
+	cl.Starter(
+            label='佛光會相關活動',
+            message='在今年的國際佛光會世界大會上，與會者分享了許多關於宗教教育的新見解',
+        ),
+        cl.Starter(
+            label='佛光會下轄職位',
+            message='金獅幹部們在理事會會議中討論了重要的政策變更。',
+        ),
         cl.Starter(
             label="佛經討論",
             message="師父向弟子解釋了真空妙有的深意，並勸勉他們日常生活中體驗這一真理。",
