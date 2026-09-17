@@ -1,3 +1,56 @@
+# fgs-data
+
+Fo Guang Shan (佛光山) Buddhist glossary data, and the tooling that turns it into
+Chinese→English translation datasets.
+
+Buddhist material is hard to translate consistently. 般若 is rendered "Prajna" in
+one glossary entry and "Wisdom" in the next; 國際佛光會 has an official English
+name (Buddha's Light International Association) that no general-purpose model
+reliably produces. This repository collects the bilingual source material that
+Fo Guang Shan and the BLIA have already settled on, and builds from it the
+datasets needed to make a translator — finetuned or retrieval-augmented — use
+that same vocabulary every time.
+
+## What's here
+
+**Source material**
+
+* `blia_terminology.tsv`, `hb_glossary_v2v3.tsv` — zh↔en terminology glossaries
+  (~200 and ~9,700 entries), from BLIA organisational names to sutra titles and
+  full couplets.
+* `01.docx` … `12.docx` — a year of side-by-side bilingual daily readings
+  (Venerable Master Hsing Yun's 祈願文 and Pearls of Wisdom pieces, one file per
+  month), stored as zh/en table pairs.
+* `data/*.jsonl` — the augmented and finetune-ready datasets derived from the
+  above.
+
+**Pipeline**
+
+| Stage | Tool |
+|---|---|
+| Extract zh/en pairs from the `.docx` readings | `process.py` |
+| Merge, de-duplicate and correct glossary files | `hb_utils.py` |
+| Expand bare glossary phrases into full example sentence pairs via an LLM | `hb_process.py`, `glossary_augumentation.py` |
+| Repair malformed augmented entries | `filter_dataset.py` |
+| Convert to OpenAI chat format and run the finetune | `fgsda_to_oaift.py`, `openai_finetune.py` |
+| Chat with the resulting model | `testftm_ui.py` (Chainlit) |
+
+**Retrieval instead of finetuning**
+
+Two proofs-of-concept replace the finetuned translator with retrieval at
+inference time, so new terminology lands without retraining:
+
+* `azure_rag_poc.py` — hybrid keyword + vector retrieval over Azure AI Search.
+* `grep_rag_poc.py` — no embeddings and no vector store at all; an LLM drives
+  plain `grep` over the translation memory in a loop. Written up in
+  `grep-based-rag.md`.
+
+**Evaluation**
+
+* `wer/` — Word Error Rate for ASR transcripts of these talks, with jieba
+  segmentation for Chinese. See `wer/README.md`.
+* `ytplaylists.py` — pulls the YouTube playlists listed below, used as test audio.
+
 ## Setup
 ```
 python -m venv venv
