@@ -82,3 +82,12 @@ python hb_utils.py adjust blia_terminology_0327.tsv > blia_terminology_corrected
 
 ### Dump the augumented entries(for finetune) in a readable form
 python hb_utils.py dumpftjson fgsft_202503.jsonl > fgsft_202503.csv
+
+## License
+
+The code in this repository is released under the [MIT License](LICENSE.txt).
+
+Note that the glossaries, transcripts (`*.docx`) and derived datasets bundled
+here originate from third-party Fo Guang Shan / BLIA material. The MIT license
+covers this repository's own code and does not grant rights to that underlying
+source material — check with the rights holder before redistributing it.
